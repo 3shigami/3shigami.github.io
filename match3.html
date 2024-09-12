@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Истино женская игра</title>
@@ -70,6 +71,15 @@
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        @media (max-width: 480px) {
+    .game-board {
+        width: 90vw;
+        height: 90vw;
+    }
+    .cell {
+        font-size: 0.8em;
+    }
+}
     </style>
 </head>
 <body>

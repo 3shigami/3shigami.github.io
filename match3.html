@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Истино женская игра</title>
+    <style>
+        body {
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .game-container {
+            text-align: center;
+        }
+        h1 {
+            color: #00ffff;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+            margin-bottom: 20px;
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-gap: 5px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 20px #ff00de;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-size: cover;
+            background-position: center;
+        }
+        .cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px #fff;
+        }
+        .score {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #ff00de;
+            text-shadow: 0 0 10px #ff00de;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff00de;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .back-button:hover {
+            background-color: #00ffff;
+            box-shadow: 0 0 10px #00ffff;
+        }
+        @keyframes fall {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Истино женская игра</h1>
+        <div class="game-board" id="gameBoard"></div>
+        <div class="score">Помыто посуды: <span id="scoreValue">0</span></div>
+        <a href="index.html" class="back-button">Назад на главную</a>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="background_music.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио элемент.
+    </audio>
+
+    <script>
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        
+        // Проверяем, играла ли музыка раньше
+        if (localStorage.getItem('musicPlaying') === 'true') {
+            backgroundMusic.play();
+        }
+
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime) {
+            backgroundMusic.currentTime = parseFloat(savedTime);
+        }
+
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('musicTime', backgroundMusic.currentTime);
+        });
+    </script>
+
+
+    <script>
+        const hamsters = [
+            'url("hamster1.png")',
+            'url("hamster2.png")',
+            'url("hamster3.png")',
+            'url("hamster4.png")',
+            'url("hamster5.png")',
+            'url("hamster6.png")'
+        ];
+        const boardSize = 8;
+        let score = 0;
+        let board = [];
+        let selectedCell = null;
+
+        function createBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            for (let i = 0; i < boardSize; i++) {
+                board[i] = [];
+                for (let j = 0; j < boardSize; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cell.style.backgroundImage = getRandomHamster();
+                    cell.addEventListener('click', cellClick);
+                    gameBoard.appendChild(cell);
+                    board[i][j] = cell;
+                }
+            }
+        }
+
+        function getRandomHamster() {
+            return hamsters[Math.floor(Math.random() * hamsters.length)];
+        }
+
+        function cellClick(e) {
+            const clickedCell = e.target;
+            if (selectedCell === null) {
+                selectedCell = clickedCell;
+                selectedCell.style.transform = 'scale(1.1)';
+            } else {
+                if (areAdjacent(selectedCell, clickedCell)) {
+                    swapCells(selectedCell, clickedCell);
+                    if (!checkAndRemoveMatches()) {
+                        swapCells(selectedCell, clickedCell);
+                    }
+                }
+                selectedCell.style.transform = 'scale(1)';
+                selectedCell = null;
+            }
+        }
+
+        function areAdjacent(cell1, cell2) {
+            const row1 = parseInt(cell1.dataset.row);
+            const col1 = parseInt(cell1.dataset.col);
+            const row2 = parseInt(cell2.dataset.row);
+            const col2 = parseInt(cell2.dataset.col);
+            return (Math.abs(row1 - row2) + Math.abs(col1 - col2)) === 1;
+        }
+
+        function swapCells(cell1, cell2) {
+            const tempImage = cell1.style.backgroundImage;
+            cell1.style.backgroundImage = cell2.style.backgroundImage;
+            cell2.style.backgroundImage = tempImage;
+        }
+
+        function checkAndRemoveMatches() {
+            let matchFound = false;
+            for (let i = 0; i < boardSize; i++) {
+                for (let j = 0; j < boardSize; j++) {
+                    const horizontalMatch = checkMatch(i, j, 0, 1);
+                    const verticalMatch = checkMatch(i, j, 1, 0);
+                    if (horizontalMatch.length >= 3 || verticalMatch.length >= 3) {
+                        matchFound = true;
+                        removeMatches(horizontalMatch.concat(verticalMatch));
+                    }
+                }
+            }
+            if (matchFound) {
+                setTimeout(() => {
+                    fillBoard();
+                    checkAndRemoveMatches();
+                }, 500);
+            }
+            return matchFound;
+        }
+
+        function checkMatch(row, col, rowDir, colDir) {
+            const hamster = board[row][col].style.backgroundImage;
+            let matches = [[row, col]];
+            let newRow = row + rowDir;
+            let newCol = col + colDir;
+
+            while (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize &&
+                   board[newRow][newCol].style.backgroundImage === hamster) {
+                matches.push([newRow, newCol]);
+                newRow += rowDir;
+                newCol += colDir;
+            }
+
+            return matches.length >= 3 ? matches : [];
+        }
+
+        function removeMatches(matches) {
+            matches.forEach(([row, col]) => {
+                board[row][col].style.backgroundImage = 'none';
+            });
+            updateScore(matches.length);
+        }
+
+        function updateScore(matchLength) {
+            score += matchLength * 10;
+            document.getElementById('scoreValue').textContent = score;
+        }
+
+        function fillBoard() {
+            for (let col = 0; col < boardSize; col++) {
+                let emptyCell = boardSize - 1;
+                for (let row = boardSize - 1; row >= 0; row--) {
+                    if (board[row][col].style.backgroundImage !== 'none') {
+                        if (row !== emptyCell) {
+                            board[emptyCell][col].style.backgroundImage = board[row][col].style.backgroundImage;
+                            board[row][col].style.backgroundImage = 'none';
+                            animateFall(board[emptyCell][col]);
+                        }
+                        emptyCell--;
+                    }
+                }
+                for (let row = emptyCell; row >= 0; row--) {
+                    board[row][col].style.backgroundImage = getRandomHamster();
+                    animateFall(board[row][col]);
+                }
+            }
+        }
+
+        function animateFall(cell) {
+            cell.style.animation = 'none';
+            cell.offsetHeight;
+            cell.style.animation = 'fall 0.5s';
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>

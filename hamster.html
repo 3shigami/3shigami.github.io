@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Неоновый Хомячок: Тапай!</title>
+    <style>
+        body {
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        .game-container {
+            text-align: center;
+            position: relative;
+            transform: scale(1.2);
+        }
+        h1 {
+            color: #00ffff;
+            font-size: 3.5em;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            margin-bottom: 30px;
+        }
+        .hamster-arena {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .side-hamster {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 15px #00ffff) drop-shadow(0 0 30px #00ffff);
+        }
+        .hamster-clicker {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+        }
+        .clicker-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #ff00de;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            box-shadow: 0 0 30px #ff00de, 0 0 60px #ff00de;
+            animation: pulse 1.5s infinite;
+        }
+        .clicker-circle span {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff;
+        }
+        .clicker-circle:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 40px #ff00de, 0 0 80px #ff00de;
+        }
+        .neon-text {
+            color: #fff;
+            font-size: 24px;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00de, 0 0 30px #ff00de, 0 0 40px #ff00de;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background-color: #00ffff;
+            color: #000;
+            font-size: 20px;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+        }
+        .back-button:hover {
+            background-color: #ff00de;
+            color: #fff;
+            box-shadow: 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 60px #ff00de;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 30px #ff00de, 0 0 60px #ff00de; }
+            50% { box-shadow: 0 0 40px #ff00de, 0 0 80px #ff00de; }
+            100% { box-shadow: 0 0 30px #ff00de, 0 0 60px #ff00de; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="game-container">
+        <h1>Неоновый Хомячок: Тапай!</h1>
+        <div class="hamster-arena">
+            <img src="hamster1.png" alt="Хомяк 1" class="side-hamster">
+            <div class="hamster-clicker">
+                <div id="hamster" class="clicker-circle">
+                    <span>Тапай!</span>
+                </div>
+                <p class="neon-text">Клики: <span id="click-count">0</span></p>
+            </div>
+            <img src="hamster2.png" alt="Хомяк 2" class="side-hamster">
+        </div>
+        <a href="index.html" class="back-button">Назад на главную</a>
+    </div>
+    
+    <audio id="backgroundMusic" loop>
+        <source src="background_music.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио элемент.
+    </audio>
+
+    <script>
+        let clickCount = 0;
+        const hamster = document.getElementById('hamster');
+        const clickCountDisplay = document.getElementById('click-count');
+
+        const background = document.querySelector('.background');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = `${Math.random() * 3}px`;
+            star.style.height = star.style.width;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${Math.random() * 2 + 1}s`;
+            background.appendChild(star);
+        }
+
+        hamster.addEventListener('click', () => {
+            clickCount++;
+            clickCountDisplay.textContent = clickCount;
+            hamster.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                hamster.style.transform = 'scale(1)';
+            }, 100);
+            hamster.style.boxShadow = '0 0 60px #ff00de, 0 0 120px #ff00de';
+            setTimeout(() => {
+                hamster.style.boxShadow = '0 0 30px #ff00de, 0 0 60px #ff00de';
+            }, 100);
+        });
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        if (localStorage.getItem('musicPlaying') === 'true') {
+            backgroundMusic.play();
+        }
+        const savedTime = localStorage.getItem('musicTime');
+        if (savedTime) {
+            backgroundMusic.currentTime = parseFloat(savedTime);
+        }
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('musicTime', backgroundMusic.currentTime);
+        });
+    </script>
+</body>
+</html>

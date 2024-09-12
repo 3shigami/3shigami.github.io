@@ -1,0 +1,84 @@
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.neon-text {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de, 0 0 50px #ff00de, 0 0 75px #ff00de;
+}
+
+.hamster-arena {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.side-hamster {
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #00ffff);
+}
+
+.hamster-clicker {
+    text-align: center;
+}
+
+#hamster {
+    cursor: pointer;
+    transition: transform 0.1s;
+    filter: drop-shadow(0 0 15px #ff00de);
+}
+
+#hamster:active {
+    transform: scale(0.95);
+}
+
+.profile-cards {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.profile-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+}
+
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 5px #00ffff);
+}
+
+h1 {
+    font-size: 3em;
+    margin-bottom: 30px;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+.power, .speed {
+    font-weight: bold;
+}
